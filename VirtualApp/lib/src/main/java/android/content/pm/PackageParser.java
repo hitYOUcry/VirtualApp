@@ -37,6 +37,10 @@ public class PackageParser {
         public ActivityInfo info;
     }
 
+    public static final class SigningDetails {
+        public Signature[] signatures;
+    }
+
     public class Package {
         public final ArrayList<Activity> activities = new ArrayList<Activity>(0);
         public final ArrayList<Activity> receivers = new ArrayList<Activity>(0);
@@ -47,6 +51,7 @@ public class PackageParser {
         public final ArrayList<PermissionGroup> permissionGroups = new ArrayList<PermissionGroup>(0);
         public final ArrayList<String> requestedPermissions = new ArrayList<String>();
         public Signature[] mSignatures;
+        public SigningDetails mSigningDetails;
         public Bundle mAppMetaData;
         public Object mExtras;
         public String packageName;
@@ -63,6 +68,12 @@ public class PackageParser {
         // Applications requested features
         public ArrayList<FeatureInfo> reqFeatures = null;
         public int mSharedUserLabel;
+        public String[] splitNames;
+    }
+
+    public class PackageLite {
+        /** Names of any split APKs, ordered by parsed splitName */
+        public String[] splitNames;
     }
 
     public final class Service extends Component<ServiceIntentInfo> {

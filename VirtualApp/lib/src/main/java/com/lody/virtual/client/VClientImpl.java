@@ -313,7 +313,11 @@ public final class VClientImpl extends IVClient.Stub {
         if (!conflict) {
             InvocationStubManager.getInstance().checkEnv(AppInstrumentation.class);
         }
-        mInitialApplication = LoadedApk.makeApplication.call(data.info, false, null);
+        try {
+            mInitialApplication = LoadedApk.makeApplication.callWithException(data.info, false, null);
+        } catch (Throwable throwable) {
+            throw new RuntimeException("makeApplication failed: ", throwable);
+        }
         mirror.android.app.ActivityThread.mInitialApplication.set(mainThread, mInitialApplication);
         ContextFixer.fixContext(mInitialApplication);
         if (Build.VERSION.SDK_INT >= 24 && "com.tencent.mm:recovery".equals(processName)) {

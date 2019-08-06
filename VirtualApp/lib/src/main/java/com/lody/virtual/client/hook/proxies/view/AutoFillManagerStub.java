@@ -1,6 +1,7 @@
 package com.lody.virtual.client.hook.proxies.view;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.util.Log;
 
 import com.lody.virtual.client.hook.base.BinderInvocationProxy;
@@ -52,7 +53,11 @@ public class AutoFillManagerStub extends BinderInvocationProxy {
             }
             @Override
             public boolean beforeCall(Object who, Method method, Object... args) {
-                MethodParameterUtils.replaceLastAppPkg(args);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    MethodParameterUtils.replaceLastComponentName(args);
+                } else {
+                    MethodParameterUtils.replaceLastAppPkg(args);
+                }
                 return super.beforeCall(who, method, args);
             }
         });

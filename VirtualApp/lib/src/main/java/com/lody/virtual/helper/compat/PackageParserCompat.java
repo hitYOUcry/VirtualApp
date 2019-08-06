@@ -13,11 +13,13 @@ import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Process;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.os.VUserHandle;
 
 import java.io.File;
+import java.util.Arrays;
 
 import mirror.android.content.pm.PackageParserJellyBean;
 import mirror.android.content.pm.PackageParserJellyBean17;
@@ -25,6 +27,7 @@ import mirror.android.content.pm.PackageParserLollipop;
 import mirror.android.content.pm.PackageParserLollipop22;
 import mirror.android.content.pm.PackageParserMarshmallow;
 import mirror.android.content.pm.PackageParserNougat;
+import mirror.android.content.pm.PackageParserPie;
 import mirror.android.content.pm.PackageUserState;
 
 import static android.os.Build.VERSION_CODES.JELLY_BEAN;
@@ -33,12 +36,14 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.LOLLIPOP_MR1;
 import static android.os.Build.VERSION_CODES.M;
 import static android.os.Build.VERSION_CODES.N;
+import static android.os.Build.VERSION_CODES.P;
 
 /**
  * @author Lody
  */
 
 public class PackageParserCompat {
+    private static final String TAG = "PackageParserCompat_";
 
     public static final int[] GIDS = VirtualCore.get().getGids();
     private static final int API_LEVEL = Build.VERSION.SDK_INT;
@@ -63,7 +68,13 @@ public class PackageParserCompat {
     }
 
     public static Package parsePackage(PackageParser parser, File packageFile, int flags) throws Throwable {
-        if (API_LEVEL >= M) {
+        if (API_LEVEL >= P) {
+            Package p = PackageParserPie.parsePackage.callWithException(parser, packageFile, flags);
+            PackageParser.PackageLite packageLite = PackageParserPie.parsePackageLite.callWithException(parser, packageFile, flags);
+            Log.i(TAG, "packageLite=" + (packageLite == null ? "null" : (packageLite + "||" + Arrays.toString(packageLite.splitNames))));
+            return p;
+
+        } else if (API_LEVEL >= M) {
             return PackageParserMarshmallow.parsePackage.callWithException(parser, packageFile, flags);
         } else if (API_LEVEL >= LOLLIPOP_MR1) {
             return PackageParserLollipop22.parsePackage.callWithException(parser, packageFile, flags);
@@ -170,7 +181,9 @@ public class PackageParserCompat {
     }
 
     public static void collectCertificates(PackageParser parser, Package p, int flags) throws Throwable {
-        if (API_LEVEL >= N) {
+        if (API_LEVEL >= P) {
+            PackageParserPie.collectCertificates.callWithException(p, flags == 0);
+        } else if (API_LEVEL >= N) {
             PackageParserNougat.collectCertificates.callWithException(p, flags);
         } else if (API_LEVEL >= M) {
             PackageParserMarshmallow.collectCertificates.callWithException(parser, p, flags);

@@ -48,6 +48,7 @@ public class VPackage implements Parcelable {
     public ArrayList<String> protectedBroadcasts;
     public ApplicationInfo applicationInfo;
     public Signature[] mSignatures;
+    public String[] splitNames;
     public Bundle mAppMetaData;
     public String packageName;
     public int mPreferredOrder;

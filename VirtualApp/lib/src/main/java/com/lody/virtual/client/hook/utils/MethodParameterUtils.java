@@ -1,5 +1,8 @@
 package com.lody.virtual.client.hook.utils;
 
+import android.content.ComponentName;
+
+import com.lody.virtual.client.VClientImpl;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.helper.utils.ArrayUtils;
 
@@ -45,6 +48,18 @@ public class MethodParameterUtils {
 		}
 		return null;
 	}
+
+	public static ComponentName replaceLastComponentName(Object[] args) {
+		int index = ArrayUtils.indexOfLast(args, ComponentName.class);
+		if (index != -1) {
+			ComponentName comp = (ComponentName) args[index];
+			ComponentName newComp = new ComponentName(VirtualCore.get().getHostPkg(), comp.getClassName());
+			args[index] = newComp;
+			return newComp;
+		}
+		return null;
+	}
+
 
 	public static String replaceSequenceAppPkg(Object[] args, int sequence) {
 		int index = ArrayUtils.indexOf(args, String.class, sequence);

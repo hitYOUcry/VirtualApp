@@ -16,6 +16,7 @@ import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.fixer.ComponentFixer;
@@ -36,6 +37,7 @@ import java.util.List;
 
 import mirror.android.content.pm.ApplicationInfoL;
 import mirror.android.content.pm.ApplicationInfoN;
+import mirror.android.content.pm.PackageParser$SigningDetails;
 
 /**
  * @author Lody
@@ -172,7 +174,18 @@ public class PackageParserEx {
             }
         }
         cache.applicationInfo = p.applicationInfo;
-        cache.mSignatures = p.mSignatures;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            cache.mSignatures = PackageParser$SigningDetails.signatures.get(p.mSigningDetails);
+        } else {
+            cache.mSignatures = p.mSignatures;
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            cache.splitNames = p.splitNames;
+            cache.applicationInfo.splitNames = p.splitNames;
+            Log.i(TAG,"cache.applicationInfo.splitNames = " + cache.applicationInfo.splitNames);
+        }
+
         cache.mAppMetaData = p.mAppMetaData;
         cache.packageName = p.packageName;
         cache.mPreferredOrder = p.mPreferredOrder;
@@ -201,8 +214,12 @@ public class PackageParserEx {
         ai.publicSourceDir = ps.apkPath;
         ai.sourceDir = ps.apkPath;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ai.splitSourceDirs = new String[]{ps.apkPath};
-            ai.splitPublicSourceDirs = ai.splitSourceDirs;
+//            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+//                //fix setupJitProfileSupport in Android P.
+//                ai.splitNames = new String[]{null};
+//            }
+//            ai.splitSourceDirs = new String[]{ps.apkPath};
+//            ai.splitPublicSourceDirs = ai.splitSourceDirs;
             ApplicationInfoL.scanSourceDir.set(ai, ai.dataDir);
             ApplicationInfoL.scanPublicSourceDir.set(ai, ai.dataDir);
             String hostPrimaryCpuAbi = ApplicationInfoL.primaryCpuAbi.get(VirtualCore.get().getContext().getApplicationInfo());

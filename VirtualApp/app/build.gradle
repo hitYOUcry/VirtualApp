@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "io.virtualapp"
         minSdkVersion 15
@@ -64,4 +64,6 @@ dependencies {
     implementation 'com.jonathanfinerty.once:once:1.0.3'
     implementation 'com.flurry.android:analytics:6.9.2'
     implementation 'com.kyleduo.switchbutton:library:1.4.6'
+
+    implementation 'me.weishu:free_reflection:2.1.0'
 }
