@@ -1,6 +1,7 @@
 package io.virtualapp.splash;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.lody.virtual.client.core.VirtualCore;
@@ -33,6 +34,9 @@ public class SplashActivity extends VActivity {
             doActionInThread();
             time = System.currentTimeMillis() - time;
             long delta = 3000L - time;
+
+            Log.i("SplashActivity_", "will sleep " + delta + "ms.");
+
             if (delta > 0) {
                 VUiKit.sleep(delta);
             }

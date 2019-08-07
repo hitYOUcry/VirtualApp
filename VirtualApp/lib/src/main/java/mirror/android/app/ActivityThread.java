@@ -48,6 +48,9 @@ public class ActivityThread {
     public static RefMethod<Void> sendActivityResult;
     public static RefMethod<Binder> getApplicationThread;
 
+    @MethodReflectParams({"java.lang.String","android.content.res.CompatibilityInfo", "int"})
+    public static RefMethod<Object> getPackageInfo;
+
     public static Object installProvider(Object mainThread, Context context, ProviderInfo providerInfo, Object holder) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             return installProvider.call(mainThread, context, holder, providerInfo, false, true);

@@ -52,6 +52,7 @@ import com.lody.virtual.remote.PendingResultData;
 import com.lody.virtual.remote.VDeviceInfo;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +104,7 @@ public final class VClientImpl extends IVClient.Stub {
     private AppBindData mBoundApplication;
     private Application mInitialApplication;
     private CrashHandler crashHandler;
+    private Object mTempLoadedApk;
 
     public static VClientImpl get() {
         return gClient;
@@ -313,11 +315,23 @@ public final class VClientImpl extends IVClient.Stub {
         if (!conflict) {
             InvocationStubManager.getInstance().checkEnv(AppInstrumentation.class);
         }
+
+        try {
+            fixLoadedApkSecurityViolation(data.appInfo.packageName);
+        } catch (Throwable e) {
+            Log.e(TAG, "fixLoadedApkSecurityViolation failed: ", e);
+        }
+
         try {
             mInitialApplication = LoadedApk.makeApplication.callWithException(data.info, false, null);
         } catch (Throwable throwable) {
             throw new RuntimeException("makeApplication failed: ", throwable);
         }
+
+        if (mTempLoadedApk != null) {
+            mTempLoadedApk = null;
+        }
+
         mirror.android.app.ActivityThread.mInitialApplication.set(mainThread, mInitialApplication);
         ContextFixer.fixContext(mInitialApplication);
         if (Build.VERSION.SDK_INT >= 24 && "com.tencent.mm:recovery".equals(processName)) {
@@ -350,6 +364,15 @@ public final class VClientImpl extends IVClient.Stub {
         }
         VActivityManager.get().appDoneExecuting();
         VirtualCore.get().getComponentDelegate().afterApplicationCreate(mInitialApplication);
+    }
+
+    private void fixLoadedApkSecurityViolation(String packageName) throws Throwable {
+        mTempLoadedApk = ActivityThread.getPackageInfo.callWithException(VirtualCore.mainThread(), packageName, null, Context.CONTEXT_INCLUDE_CODE | Context.CONTEXT_IGNORE_SECURITY);
+        LoadedApk.mSecurityViolation.set(mTempLoadedApk, false);
+
+        Map<String, WeakReference<?>> mPackages = ActivityThread.mPackages.get(VirtualCore.mainThread());
+        Object loadedApk = mPackages.get(packageName).get();
+        Log.i(TAG, ">fixLoadedApkSecurityViolation " + mTempLoadedApk + "||" + loadedApk);
     }
 
     private void fixWeChatRecovery(Application app) {

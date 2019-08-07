@@ -13,6 +13,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Handler;
 import android.os.IInterface;
 
+import mirror.RefBoolean;
 import mirror.RefClass;
 import mirror.RefObject;
 import mirror.RefMethod;
@@ -27,6 +28,7 @@ public class LoadedApk {
     public static RefMethod<IServiceConnection> getServiceDispatcher;
     @MethodParams({Context.class, ServiceConnection.class})
     public static RefMethod<IServiceConnection> forgetServiceDispatcher;
+    public static RefBoolean mSecurityViolation;
 
     public static class ReceiverDispatcher {
         public static Class Class = RefClass.load(ReceiverDispatcher.class, "android.app.LoadedApk$ReceiverDispatcher");
