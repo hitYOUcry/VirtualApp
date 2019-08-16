@@ -194,7 +194,6 @@ public class PackageParserEx {
         cache.mSharedUserLabel = p.mSharedUserLabel;
         cache.usesLibraries = p.usesLibraries;
         cache.mVersionCode = p.mVersionCode;
-        cache.mAppMetaData = p.mAppMetaData;
         cache.configPreferences = p.configPreferences;
         cache.reqFeatures = p.reqFeatures;
         addOwner(cache);

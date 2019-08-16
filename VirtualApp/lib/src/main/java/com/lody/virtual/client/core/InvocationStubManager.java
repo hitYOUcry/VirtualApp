@@ -140,7 +140,6 @@ public final class InvocationStubManager {
 			addInjector(new SearchManagerStub());
 			addInjector(new ContentServiceStub());
 			addInjector(new ConnectivityStub());
-
 			if (Build.VERSION.SDK_INT >= JELLY_BEAN_MR2) {
 				addInjector(new VibratorStub());
 				addInjector(new WifiManagerStub());
@@ -150,7 +149,6 @@ public final class InvocationStubManager {
 			if (Build.VERSION.SDK_INT >= JELLY_BEAN_MR1) {
 				addInjector(new UserManagerStub());
 			}
-
 			if (Build.VERSION.SDK_INT >= JELLY_BEAN_MR1) {
 				addInjector(new DisplayStub());
 			}
